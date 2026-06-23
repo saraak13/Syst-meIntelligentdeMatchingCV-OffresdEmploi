@@ -1,0 +1,102 @@
+here is all the description
+You have a dual-structured project for an AI-powered Recruitment and CV-Job Matching Platform (often referenced as RecruitAI or PFA CV Matching). The repository consists of a modern React frontend and a FastAPI backend connected to PostgreSQL.
+
+Here is a breakdown of what you have:
+
+1. Overall System Architecture
+Frontend (
+
+recruitment-platform
+): React (TSX) application styled with Tailwind CSS (v4) and Radix UI.
+Backend (
+
+backend
+): FastAPI application handling PDF text parsing, AI extraction, and vector matching.
+AI Matching Model: Generates 768-dimensional embeddings via Ollama (nomic-embed-text) or OpenAI. Matches candidates to jobs using vector similarity via PostgreSQL's pgvector extension.
+2. Frontend Features & Components
+All routing is managed in 
+
+App.tsx
+ and covers:
+
+Authentication: 
+
+Login
+ and 
+
+Register
+ views mapped through 
+
+AuthContext.tsx
+.
+Candidate Portal:
+Dashboard: Key statistics and summary of application statuses.
+CV Upload: A drag-and-drop parser interface.
+Job Matches: AI recommendations sorted by similarity score.
+Applications & Profile: Custom forms to view jobs applied for and manage candidate information.
+AI Chatbot: Contextual chat workspace for candidates.
+Recruiter Portal:
+Dashboard: Recruiter hub listing jobs and applicants.
+Job Offers: Job creation form.
+Candidates: AI-ranked candidates for selected roles.
+Analytics: Charts showing matching distributions and applicant flow (using Recharts).
+Mock Data: 
+
+mockData.ts
+ contains ready-to-use user profiles (e.g., Sarah Chen as a candidate, Marcus Rodriguez as a recruiter).
+3. Backend Pipeline
+The backend in 
+
+main.py
+ uses SQLAlchemy models 
+
+models.py
+ to map users, jobs, CVs, and embeddings.
+
+PDF Extraction: 
+
+ocr_extractor.py
+ extracts text using pdfplumber or runs PyMuPDF with Tesseract OCR as a fallback.
+Structured Parsing: 
+
+llm_extractor.py
+ uses Groq (Llama-3.3-70b-versatile) to translate and extract the CV text into a standard English JSON format. If Groq is unavailable, it gracefully falls back to a regex-based parser.
+Vector Embeddings: 
+
+embeddings.py
+ generates nomic-embed-text vectors for CV and Job fields.
+Weighted Similarity Matching: In 
+
+matching.py
+, matching scores are calculated using a weighted formula: $$\text{Score} = 40%\text{ Title} + 40%\text{ Skills} + 15%\text{ Experience} + 5%\text{ Projects} + \text{Keyword Overlap Bonus (up to 25%)}$$
+4. Running the Project
+Database Connection
+The backend 
+
+database.py
+ looks at 
+
+backend/.env
+ to connect to a local PostgreSQL instance:
+
+env
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/recruit_ai
+GROQ_API_KEY=gsk_...
+Seeding Jobs
+You have a seeder 
+
+seed_jobs.py
+ to quickly populate your PostgreSQL DB with sample job offers and embed them:
+
+powershell
+python ..\backend\scratch\seed_jobs.py
+Starting the Services
+Frontend: Run npm run dev in 
+
+recruitment-platform
+. It proxies /api calls to the backend.
+Backend: Activate your virtual environment and run the Uvicorn FastAPI server on port 8001:
+powershell
+cd ..\backend
+.\venv\Scripts\activate
+uvicorn main:app --reload --port 8001

@@ -1,0 +1,15 @@
+backend
+cd ..\backend
+
+.\venv\Scripts\activate
+uvicorn main:app --reload --port 8002
+or
+.\.venv\Scripts\python.exe -m uvicorn main:app --reload --port 8002
+
+frontend
+
+cd ..\recruitment-platform> 
+npm run dev
+
+
+go to http://localhost:5173/login
